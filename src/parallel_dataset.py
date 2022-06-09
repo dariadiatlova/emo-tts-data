@@ -15,7 +15,7 @@ def get_speaker_transcripts(txt_path: str) -> Dict:
                                 "0011_000002.wav": "I did go, and made many prisoners."}
     """
     result_dict = {}
-    with open(txt_path, encoding="utf8", errors='ignore') as f:
+    with open(txt_path, "r") as f:
         lines = f.readlines()
         for line in lines:
             string = line.split("\t")

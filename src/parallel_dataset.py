@@ -25,7 +25,7 @@ def get_speaker_transcripts(txt_path: str) -> Dict:
 
 def write_txt(text: str, path: str) -> None:
     with open(path, 'w') as f:
-        f.write(text)
+        f.write(text + "\n")
 
 
 @hydra.main(config_path="configs", config_name="parallel_dataset")

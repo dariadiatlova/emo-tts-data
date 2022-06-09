@@ -33,6 +33,8 @@ def build_dataset(cfg):
     wavs_path = cfg.target_directory_path + "/wavs"
     emotion_dict = dict(zip(cfg.emotions, cfg.emotion_ids))
     for speaker_id in tqdm(cfg.original_speaker_ids):
+        print(cfg.original_speaker_ids)
+        print(speaker_id)
         speaker_transcripts_dict = get_speaker_transcripts(f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt")
         # each speaker has 5 folders for emotions: "Neutral", "Angry", "Happy", "Sad", "Surprise"
         for emotion in cfg.emotions:

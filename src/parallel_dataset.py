@@ -18,10 +18,10 @@ def get_speaker_transcripts(txt_path: str) -> Dict:
     with open(txt_path) as f:
         lines = f.readlines()
         print("DEBUG")
-        print(len(lines))
         for line in lines:
-            print(line)
+            print(line[0])
             result_dict[f"{line[0]}.wav"] = line[1]
+    print(result_dict.keys())
     return result_dict
 
 

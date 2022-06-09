@@ -19,12 +19,13 @@ def get_speaker_transcripts(txt_path: str) -> Dict:
         lines = f.readlines()
         for line in lines:
             string = line.split("\t")
+            print(string)
             result_dict[f"{string[0]}.wav"] = line[1]
     return result_dict
 
 
 def write_txt(text: str, path: str) -> None:
-    with open(path, 'w') as f:
+    with open(path, 'a') as f:
         f.write(text + "\n")
 
 
@@ -35,7 +36,7 @@ def build_dataset(cfg):
     emotion_dict = dict(zip(cfg.emotions, cfg.emotion_ids))
     for speaker_id in tqdm(cfg.original_speaker_ids):
         # print(cfg.original_speaker_ids)
-        # print(speaker_id)
+        print(f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt")
         speaker_transcripts_dict = get_speaker_transcripts(f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt")
         # each speaker has 5 folders for emotions: "Neutral", "Angry", "Happy", "Sad", "Surprise"
         for emotion in cfg.emotions:

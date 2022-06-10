@@ -25,7 +25,7 @@ def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:
             if string == "\ufeff0012_000001":
                 result_dict["0012_000001.wav"] = string[1]
             # handle handwritten indent
-            if len(string) > 1:
+            elif len(string) > 1:
                 result_dict[f"{string[0]}.wav"] = string[1]
     return result_dict
 

@@ -76,20 +76,20 @@ def build_dataset(cfg):
                 for audio_id, wav in enumerate(wavs):
                     _, wav_filename = os.path.split(wav)
                     # skip audio for which transcription is absent
-                    if wav_filename == "0014_001590":
-                        continue
-                    emotion_id = emotion_dict[emotion]
-                    new_absolute_wav_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
-                    new_relative_wav_path = f"vk_etts_data/wavs/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
-                    shutil.copyfile(wav, new_absolute_wav_path)
-                    new_txt_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.txt"
-                    transcription = speaker_transcripts_dict[wav_filename]
-                    # write transcription, file name of txt == file name of wav for future TextGrids generation
-                    write_txt(transcription, new_txt_path)
-                    # write data to Manifest: "/path/to/audio.wav"|"speaker_id"|"emotion_id"|"text"
-                    write_txt(
-                        f"{new_relative_wav_path}|{target_speaker_id}|{emotion_id}|{transcription}", manifest_filename
-                    )
+                    if wav_filename != "0014_001590":
+                        emotion_id = emotion_dict[emotion]
+                        new_absolute_wav_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
+                        new_relative_wav_path = f"vk_etts_data/wavs/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
+                        shutil.copyfile(wav, new_absolute_wav_path)
+                        new_txt_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.txt"
+                        transcription = speaker_transcripts_dict[wav_filename]
+                        # write transcription, file name of txt == file name of wav for future TextGrids generation
+                        write_txt(transcription, new_txt_path)
+                        # write data to Manifest: "/path/to/audio.wav"|"speaker_id"|"emotion_id"|"text"
+                        write_txt(
+                            f"{new_relative_wav_path}|{target_speaker_id}|{emotion_id}|{transcription}",
+                            manifest_filename
+                        )
     print(f"Saved wavs and manifests in {cfg.target_directory_path} folder!")
 
 

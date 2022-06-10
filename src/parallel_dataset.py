@@ -24,6 +24,19 @@ def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:
             # hard coding fix, somehow first sample from txt is read like '\ufeff0012_000001'
             if string[0] == "\ufeff0012_000001":
                 result_dict["0012_000001.wav"] = string[1]
+
+            elif string[0] == "\ufeff0013_000001":
+                result_dict["0013_000001.wav"] = string[1]
+
+            elif string[0] == "\ufeff0014_000001":
+                result_dict["0014_000001.wav"] = string[1]
+
+            elif string[0] == "\ufeff0018_000001":
+                result_dict["0018_000001.wav"] = string[1]
+
+            elif string[0] == "\ufeff0019_000001":
+                result_dict["0019_000001.wav"] = string[1]
+
             # handle handwritten indent
             elif len(string) > 1:
                 result_dict[f"{string[0]}.wav"] = string[1]

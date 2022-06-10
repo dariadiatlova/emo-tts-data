@@ -74,14 +74,14 @@ def build_dataset(cfg):
                 # create 3 Manifests files for train, evaluation and test
                 manifest_filename = f"{manifest_path}_{part}.txt"
                 for audio_id, wav in enumerate(wavs):
+                    _, wav_filename = os.path.split(wav)
                     # skip audio for which transcription is absent
-                    if audio_id == "0014_001590":
+                    if wav_filename == "0014_001590":
                         continue
                     emotion_id = emotion_dict[emotion]
                     new_absolute_wav_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
                     new_relative_wav_path = f"vk_etts_data/wavs/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
                     shutil.copyfile(wav, new_absolute_wav_path)
-                    _, wav_filename = os.path.split(wav)
                     new_txt_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.txt"
                     transcription = speaker_transcripts_dict[wav_filename]
                     # write transcription, file name of txt == file name of wav for future TextGrids generation

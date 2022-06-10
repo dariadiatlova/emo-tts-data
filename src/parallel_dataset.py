@@ -43,6 +43,7 @@ def build_dataset(cfg):
         speaker_transcripts_dict = get_speaker_transcripts(
             f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt", encoding_type=speaker_encoding_type
         )
+        print(speaker_transcripts_dict.keys())
         # each speaker has 5 folders for emotions: "Neutral", "Angry", "Happy", "Sad", "Surprise"
         for emotion in cfg.emotions:
             # each folder of emotion has a division on tran/evaluation/test in proportion 85% / 9% / 6%

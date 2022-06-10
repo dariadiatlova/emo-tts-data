@@ -75,7 +75,7 @@ def build_dataset(cfg):
                 manifest_filename = f"{manifest_path}_{part}.txt"
                 for audio_id, wav in enumerate(wavs):
                     # skip audio for which transcription is absent
-                    if audio_id == "0014_001590.wav":
+                    if audio_id != "0014_001590":
                         continue
                     emotion_id = emotion_dict[emotion]
                     new_absolute_wav_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.wav"

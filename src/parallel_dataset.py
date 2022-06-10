@@ -19,9 +19,12 @@ def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:
     with open(txt_path, "r", encoding=encoding_type) as f:
         lines = f.readlines()
         for line in lines:
-            string = line.split("\t")
+            string = line.split("\t")[0]
             # print(string)
-            result_dict[f"{string[0]}.wav"] = line[1]
+            # hard coding fix, somehow first sample from txt is read like '\ufeff0012_000001'
+            if encoding_type == "utf-16le" and string.startswith("\ufeff"):
+                string = string[6:]
+            result_dict[f"{string}.wav"] = line[1]
     return result_dict
 
 

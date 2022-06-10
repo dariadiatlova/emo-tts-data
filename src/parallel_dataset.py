@@ -7,15 +7,16 @@ from typing import Dict
 from tqdm import tqdm
 
 
-def get_speaker_transcripts(txt_path: str) -> Dict:
+def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:
     """
     :param txt_path: path to the file that locates in each of the speakers' folders and contains
     audio id, transcription and emotion
+    :param encoding_type: txt encoding type: [utf-16le, us-ascii, iso-8859-1]
     :return: Dict, looks like: {"0011_000001.wav": "The nine the eggs, I keep.",
                                 "0011_000002.wav": "I did go, and made many prisoners."}
     """
     result_dict = {}
-    with open(txt_path, "r", encoding="utf-8", errors="ignore") as f:
+    with open(txt_path, "r", encoding=encoding_type) as f:
         lines = f.readlines()
         for line in lines:
             string = line.split("\t")
@@ -34,10 +35,14 @@ def build_dataset(cfg):
     manifest_path = cfg.target_directory_path + "/parallel_manifest"
     wavs_path = cfg.target_directory_path + "/wavs"
     emotion_dict = dict(zip(cfg.emotions, cfg.emotion_ids))
+    encoding_dict = dict(zip(cfg.original_speaker_ids, cfg.speaker_encodings))
     for speaker_id in tqdm(cfg.original_speaker_ids):
         # print(cfg.original_speaker_ids)
+        speaker_encoding_type = encoding_dict[speaker_id]
         print(f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt")
-        speaker_transcripts_dict = get_speaker_transcripts(f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt")
+        speaker_transcripts_dict = get_speaker_transcripts(
+            f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt", encoding_type=speaker_encoding_type
+        )
         # each speaker has 5 folders for emotions: "Neutral", "Angry", "Happy", "Sad", "Surprise"
         for emotion in cfg.emotions:
             # each folder of emotion has a division on tran/evaluation/test in proportion 85% / 9% / 6%

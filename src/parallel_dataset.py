@@ -20,7 +20,7 @@ def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:
         lines = f.readlines()
         for line in lines:
             string = line.split("\t")
-            # print(string)
+            print(string)
             # hard coding fix, somehow first sample from txt is read like '\ufeff0012_000001'
             if string == "\ufeff0012_000001":
                 result_dict["0012_000001.wav"] = string[1]
@@ -39,8 +39,10 @@ def build_dataset(cfg):
     wavs_path = cfg.target_directory_path + "/wavs"
     emotion_dict = dict(zip(cfg.emotions, cfg.emotion_ids))
     encoding_dict = dict(zip(cfg.original_speaker_ids, cfg.speaker_encodings))
+    target_speaker_id_dict = dict(zip(cfg.original_speaker_ids, cfg.target_speaker_ids))
     for speaker_id in tqdm(cfg.original_speaker_ids):
         # print(cfg.original_speaker_ids)
+        target_speaker_id = target_speaker_id_dict[speaker_id]
         speaker_encoding_type = encoding_dict[speaker_id]
         # print(f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt")
         speaker_transcripts_dict = get_speaker_transcripts(
@@ -58,16 +60,18 @@ def build_dataset(cfg):
                 manifest_filename = f"{manifest_path}_{part}.txt"
                 for audio_id, wav in enumerate(wavs):
                     emotion_id = emotion_dict[emotion]
-                    new_absolute_wav_path = f"{wavs_path}/{speaker_id}_{audio_id}_{emotion_id}.wav"
-                    new_relative_wav_path = f"vk_etts_data/wavs/{speaker_id}_{audio_id}_{emotion_id}.wav"
+                    new_absolute_wav_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
+                    new_relative_wav_path = f"vk_etts_data/wavs/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
                     shutil.copyfile(wav, new_absolute_wav_path)
                     _, wav_filename = os.path.split(wav)
-                    new_txt_path = f"{wavs_path}/{speaker_id}_{audio_id}_{emotion_id}.txt"
+                    new_txt_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.txt"
                     transcription = speaker_transcripts_dict[wav_filename]
                     # write transcription, file name of txt == file name of wav for future TextGrids generation
                     write_txt(transcription, new_txt_path)
                     # write data to Manifest: "/path/to/audio.wav"|"speaker_id"|"emotion_id"|"text"
-                    write_txt(f"{new_relative_wav_path}|{speaker_id}|{emotion_id}|{transcription}", manifest_filename)
+                    write_txt(
+                        f"{new_relative_wav_path}|{target_speaker_id}|{emotion_id}|{transcription}", manifest_filename
+                    )
     print(f"Saved wavs and manifests in {cfg.target_directory_path} folder!")
 
 

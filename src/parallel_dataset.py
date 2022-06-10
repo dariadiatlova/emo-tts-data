@@ -20,7 +20,7 @@ def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:
         lines = f.readlines()
         for line in lines:
             string = line.split("\t")
-            print(string)
+            # print(string)
             result_dict[f"{string[0]}.wav"] = line[1]
     return result_dict
 
@@ -39,7 +39,7 @@ def build_dataset(cfg):
     for speaker_id in tqdm(cfg.original_speaker_ids):
         # print(cfg.original_speaker_ids)
         speaker_encoding_type = encoding_dict[speaker_id]
-        print(f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt")
+        # print(f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt")
         speaker_transcripts_dict = get_speaker_transcripts(
             f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt", encoding_type=speaker_encoding_type
         )

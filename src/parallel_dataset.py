@@ -7,7 +7,7 @@ import torchaudio
 from typing import Dict
 from tqdm import tqdm
 
-from src.utils import write_txt, audio_write
+from utils import write_txt, audio_write
 
 
 def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:

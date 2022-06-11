@@ -2,9 +2,12 @@ import glob
 import shutil
 import os
 import hydra
+import torchaudio
 
 from typing import Dict
 from tqdm import tqdm
+
+from src.utils import write_txt, audio_write
 
 
 def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:
@@ -20,7 +23,6 @@ def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:
         lines = f.readlines()
         for line in lines:
             string = line.split("\t")
-            print(string)
             # hard coding fix, somehow first sample from txt is read like '\ufeff0012_000001'
             if string[0] == "\ufeff0012_000001":
                 result_dict["0012_000001.wav"] = string[1]
@@ -43,11 +45,6 @@ def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:
     return result_dict
 
 
-def write_txt(text: str, path: str) -> None:
-    with open(path, 'a') as f:
-        f.write(text + "\n")
-
-
 @hydra.main(config_path="configs", config_name="parallel_dataset")
 def build_dataset(cfg):
     manifest_path = cfg.target_directory_path + "/parallel_manifest"
@@ -56,14 +53,11 @@ def build_dataset(cfg):
     encoding_dict = dict(zip(cfg.original_speaker_ids, cfg.speaker_encodings))
     target_speaker_id_dict = dict(zip(cfg.original_speaker_ids, cfg.target_speaker_ids))
     for speaker_id in tqdm(cfg.original_speaker_ids):
-        # print(cfg.original_speaker_ids)
         target_speaker_id = target_speaker_id_dict[speaker_id]
         speaker_encoding_type = encoding_dict[speaker_id]
-        # print(f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt")
         speaker_transcripts_dict = get_speaker_transcripts(
             f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt", encoding_type=speaker_encoding_type
         )
-        # print(speaker_transcripts_dict.keys())
         # each speaker has 5 folders for emotions: "Neutral", "Angry", "Happy", "Sad", "Surprise"
         for emotion in cfg.emotions:
             # each folder of emotion has a division on tran/evaluation/test in proportion 85% / 9% / 6%
@@ -80,7 +74,12 @@ def build_dataset(cfg):
                         emotion_id = emotion_dict[emotion]
                         new_absolute_wav_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
                         new_relative_wav_path = f"vk_etts_data/wavs/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
-                        shutil.copyfile(wav, new_absolute_wav_path)
+                        # resample and write wav or copy to the folder if sr is correct
+                        signal, sr = torchaudio.load(wav)
+                        if sr != cfg.target_sample_rate:
+                            audio_write(new_absolute_wav_path, cfg.target_sample_rate)
+                        else:
+                            shutil.copyfile(wav, new_absolute_wav_path)
                         new_txt_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.txt"
                         transcription = speaker_transcripts_dict[wav_filename]
                         # write transcription, file name of txt == file name of wav for future TextGrids generation

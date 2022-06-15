@@ -14,7 +14,7 @@ def audio_write(original_audio_path: str, target_audio_path: str, target_sr: int
 def audio_check(audio_path: str, target_sr: int) -> Tuple[np.ndarray, int]:
     signal, sr = torchaudio.load(audio_path)
     if sr != target_sr:
-        signal = librosa.resample(signal.numpy(), sr, target_sr)
+        signal = librosa.resample(signal.unsqueeze().numpy(), sr, target_sr)
     return signal, target_sr
 
 

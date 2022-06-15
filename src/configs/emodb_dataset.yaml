@@ -1,0 +1,7 @@
+target_directory_path: "/home/dadyatlova_1/dataset/etts/vk_etts_data"
+source_data_directory: "/home/dadyatlova_1/dataset/etts/emo-db"
+original_speaker_names: ["bea", "jenie", "sam"]
+target_speaker_ids: ["11", "12", "13"]
+emotions: ["Neutral", "Angry"]
+emotion_ids: [0, 1]
+target_sample_rate: 16000

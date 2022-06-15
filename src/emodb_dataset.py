@@ -37,7 +37,7 @@ def get_speaker_wavs(wavs_dir_path: str) -> Tuple[Dict, Dict, Dict]:
     train_size = int(len(paths) * 0.85)
     val_size = int(len(paths) * 0.09)
     np.random.shuffle(paths)
-    for i, path in paths:
+    for i, path in enumerate(paths):
         _, wav_filename = os.path.split(path)
         code = wav_filename[-8:-4]
         if i < train_size:

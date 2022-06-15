@@ -29,3 +29,13 @@ To process English-speakers data:
 -  fill `source_data_directory` in [config.yaml](src/configs/parallel_dataset.yaml) with the root path to the dataset;
 -  if script crashes with `KeyError` for some .wav file – open relative .txt file and add tab between audio-id and transcription.
 
+
+#### 2. EmovDB 
+- [Downloading wavs](https://openslr.org/115/), [Download transcriptions](http://www.festvox.org/cmu_arctic/cmuarctic.data)
+- [Arxiv](https://arxiv.org/pdf/1806.09514.pdf)
+
+We use only 2 emotions: `Neutral`, `Angry` taken from 3 speakers: Bea, Jenie, Sam. To process data:
+- unarchive relevant `tar.gz` folders and point the directory in `source_data_directory` in [config.yaml](src/configs/emodb_dataset.yaml);
+- place `cmuarctic.data` in the same `source_data_directory`.
+
+

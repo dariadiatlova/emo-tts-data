@@ -7,6 +7,7 @@ from typing import Tuple
 
 
 def audio_write(original_audio_path: str, target_audio_path: str, target_sr: int) -> None:
+    print(original_audio_path)
     signal, sample_rate = audio_check(original_audio_path, target_sr)
     sf.write(target_audio_path, signal, sample_rate)
 

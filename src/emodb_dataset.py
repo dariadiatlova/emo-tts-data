@@ -67,10 +67,10 @@ def build_dataset(cfg):
             for d, part in zip([train_dict, val_dict, test_dict], ["train", "evaluation", "test"]):
                 for code, original_wav_path in zip(d.keys(), d.values()):
                     transcription = transcripts_dictionary[code]
-                    target_wav_path = f"vk_etts_data/wavs/{speaker_id}_{audio_id}_{emotion_id}.wav"
+                    target_wav_path = f"{cfg.target_directory_path}/wavs/{speaker_id}_{audio_id}_{emotion_id}.wav"
                     audio_write(original_wav_path, target_wav_path, cfg.target_sample_rate)
                     manifest_filename = f"{manifest_path}_{part}.txt"
-                    new_txt_path = f"{wavs_path}/{speaker_id}_{audio_id}_{emotion_id}.txt"
+                    new_txt_path = f"{cfg.target_directory_path}/wavs/{speaker_id}_{audio_id}_{emotion_id}.txt"
                     write_txt(transcription, new_txt_path)
                     # write data to Manifest: "/path/to/audio.wav"|"speaker_id"|"emotion_id"|"text"
                     write_txt(f"{target_wav_path}|{speaker_id}|{emotion_id}|{transcription}", manifest_filename)

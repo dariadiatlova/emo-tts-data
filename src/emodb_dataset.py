@@ -76,6 +76,7 @@ def build_dataset(cfg):
                     write_txt(
                         f"vk_etts_data/wavs/{speaker_id}_{audio_id}_{emotion_id}.wav|{speaker_id}|{emotion_id}|{transcription}",
                         manifest_filename)
+                    audio_id += 1
     print(f"Saved wavs and manifests in {cfg.target_directory_path} folder!")
 
 

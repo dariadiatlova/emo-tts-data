@@ -7,7 +7,6 @@ from typing import Tuple
 
 
 def audio_write(original_audio_path: str, target_audio_path: str, target_sr: int) -> None:
-    print(original_audio_path)
     signal, sample_rate = audio_check(original_audio_path, target_sr)
     sf.write(target_audio_path, signal, sample_rate)
 
@@ -16,6 +15,8 @@ def audio_check(audio_path: str, target_sr: int) -> Tuple[np.ndarray, int]:
     signal, sr = torchaudio.load(audio_path)
     if sr != target_sr:
         signal = librosa.resample(signal.squeeze().numpy(), sr, target_sr)
+    else:
+        signal = signal.squeeze().numpy()
     return signal, target_sr
 
 

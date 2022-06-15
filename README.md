@@ -27,6 +27,7 @@ This repository consists of supprorting scripts for building datasets for ETTS i
 
 To process English-speakers data:
 -  fill `source_data_directory` in [config.yaml](src/configs/parallel_dataset.yaml) with the root path to the dataset;
+-  run [parallel_dataset](src/parallel_dataset.py);
 -  if script crashes with `KeyError` for some .wav file – open relative .txt file and add tab between audio-id and transcription.
 
 
@@ -36,6 +37,7 @@ To process English-speakers data:
 
 We use only 2 emotions: `Neutral`, `Angry` taken from 3 speakers: Bea, Jenie, Sam. To process data:
 - unarchive relevant `tar.gz` folders and point the directory in `source_data_directory` in [config.yaml](src/configs/emodb_dataset.yaml);
+- run [emodb_dataset](src/emodb_dataset.py);
 - place `cmuarctic.data` in the same `source_data_directory`.
 
 

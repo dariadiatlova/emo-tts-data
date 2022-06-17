@@ -41,3 +41,7 @@ We use only 2 emotions: `Neutral`, `Angry` taken from 3 speakers: Bea, Jenie, Sa
 - place `cmuarctic.data` in the same `source_data_directory`.
 
 
+### Profiler:
+To get stats (emotion distribution per hour and total dataset size): fill [profiler.yaml](src/configs/profiler.yaml) and run [profiler.py](src/configs/profiler.py).
+
+

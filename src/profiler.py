@@ -16,7 +16,7 @@ def main(cfg):
     for wav_path in tqdm(all_wav_paths):
         _, wav_filename = os.path.split(wav_path)
         wav, sr = torchaudio.load(wav_path)
-        seconds_len = wav.squeeze() // sr
+        seconds_len = len(wav.squeeze()) // sr
         emotion = emotion_dict[int(wav_filename[-5])]
         cfg_profiler_emotion_dict[emotion] += seconds_len
     total_dataset_len = 0

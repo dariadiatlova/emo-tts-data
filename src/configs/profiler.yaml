@@ -1,4 +1,4 @@
-target_directory_path: "/home/dadyatlova_1/dataset/etts/vk_etts_data"
+wavs_directory_path: "/home/dadyatlova_1/dataset/etts/vk_etts_data/wavs"
 emotions: ["Neutral", "Angry", "Happy", "Sad", "Surprised"]
 emotion_ids: [0, 1, 2, 3, 4]
 target_sample_rate: 16000

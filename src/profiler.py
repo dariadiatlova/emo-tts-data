@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 @hydra.main(config_path="configs", config_name="profiler")
 def main(cfg):
-    all_wav_paths = glob.glob(f"{cfg.target_directory_path}/*.wav")
+    all_wav_paths = glob.glob(f"{cfg.wavs_directory_path}/*.wav")
     emotion_dict = dict(zip(cfg.emotion_ids, cfg.emotions))
     cfg_profiler_emotion_dict = defaultdict(lambda: 0)
     for wav_path in tqdm(all_wav_paths):

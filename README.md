@@ -44,4 +44,13 @@ We use only 2 emotions: `Neutral`, `Angry` taken from 3 speakers: Bea, Jenie, Sa
 ### Profiler:
 To get stats (emotion distribution per hour and total dataset size): fill [profiler.yaml](src/configs/profiler.yaml) and run [profiler.py](src/configs/profiler.py).
 
+Output:
+
+        Emotion 'Neutral': 2.98 hours.
+        Emotion 'Sad': 2.07 hours.
+        Emotion 'Angry': 3.313 hours.
+        Emotion 'Happy': 1.845 hours.
+        Emotion 'Surprised': 1.869 hours.
+        Total dataset size: 12.077 hours.
+
 

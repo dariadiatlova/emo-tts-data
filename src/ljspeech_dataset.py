@@ -32,6 +32,7 @@ def main(cfg):
                 # print(transcriptions_dictionary.keys())
                 print(filename)
                 if os.path.isfile(f"{wav_directory_path}/{wav_filename}"):
+                    print("yes")
                     try:
                         transcription = transcriptions_dictionary[filename]
                         print(transcription)

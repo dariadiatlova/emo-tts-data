@@ -40,7 +40,7 @@ def main(cfg):
                     new_wav_path = f"{target_directory_path}/{wav_filename}"
                     new_txt_path = f"{target_directory_path}/{filename}.txt"
                     print(path, new_wav_path)
-                    shutil.copyfile(path, new_wav_path)
+                    shutil.copyfile(f"{cfg.source_directory_path}/wavs/{wav_filename}", new_wav_path)
                     write_txt(transcription, new_txt_path)
                     write_txt(f"{new_wav_path}|{transcription}", manifest_file_path)
                 except KeyError:

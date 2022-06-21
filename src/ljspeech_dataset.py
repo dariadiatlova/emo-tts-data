@@ -21,7 +21,7 @@ def main(cfg):
     # iterate through train/val/test files
     for i, txt_filename in enumerate(split_directories):
         manifest_file_path = manifests_array[i]
-        with open(txt_filename, encoding="aus-ascii") as f:
+        with open(txt_filename, encoding="us-ascii") as f:
             lines = f.readlines()
             for path in tqdm(lines):
                 _, wav_filename = os.path.split(path)

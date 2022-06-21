@@ -30,7 +30,7 @@ def main(cfg):
                 # check wav_file and its transcription exist
                 # print(f"{wav_directory_path}/{wav_filename}")
                 # print(transcriptions_dictionary.keys())
-                print(filename)
+                # print(filename)
                 if os.path.isfile(f"{wav_directory_path}/{wav_filename}"):
                     print("yes")
                     try:

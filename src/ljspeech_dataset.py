@@ -37,10 +37,10 @@ def main(cfg):
                 try:
                     transcription = transcriptions_dictionary[filename]
                     print(transcription)
-                    new_wav_path = f"{target_directory_path}/{wav_filename}"
+                    new_wav_path = f"{target_directory_path}/{filename}.wav"
                     new_txt_path = f"{target_directory_path}/{filename}.txt"
-                    print(path, new_wav_path)
-                    shutil.copyfile(f"{cfg.source_directory_path}/wavs/{wav_filename}", new_wav_path)
+                    # print(path, new_wav_path)
+                    shutil.copyfile(f"{cfg.source_directory_path}/wavs/{filename}.wav", new_wav_path)
                     write_txt(transcription, new_txt_path)
                     write_txt(f"{new_wav_path}|{transcription}", manifest_file_path)
                 except KeyError:

@@ -5,7 +5,7 @@ import hydra
 import pandas as pd
 from tqdm import tqdm
 
-from src.utils import write_txt
+from utils import write_txt
 
 
 @hydra.main(config_path="configs", config_name="ljspeech_dataset")

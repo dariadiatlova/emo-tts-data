@@ -26,21 +26,11 @@ def main(cfg):
             for path in tqdm(lines):
                 _, wav_filename = os.path.split(path)
                 filename = wav_filename[:-5]
-
-                # check wav_file and its transcription exist
-                # print(f"{wav_directory_path}/{wav_filename}")
-                # print(transcriptions_dictionary.keys())
-                # print(f"{wav_directory_path}/{wav_filename}")
-                # print(os.path.isfile(f"{wav_directory_path}/{wav_filename}"))
-                # if os.path.isfile(f"{wav_directory_path}/{wav_filename}"):
-                #     print("yes")
                 try:
                     transcription = transcriptions_dictionary[filename]
-                    print(transcription)
                     new_wav_path = f"{target_directory_path}/{filename}.wav"
                     new_txt_path = f"{target_directory_path}/{filename}.txt"
-                    # print(path, new_wav_path)
-                    shutil.copyfile(f"{cfg.source_directory_path}/wavs/{filename}.wav", new_wav_path)
+                    shutil.copyfile(f"{wav_directory_path}/{filename}.wav", new_wav_path)
                     write_txt(transcription, new_txt_path)
                     write_txt(f"{new_wav_path}|{transcription}", manifest_file_path)
                 except KeyError:

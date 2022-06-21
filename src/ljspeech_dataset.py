@@ -28,12 +28,13 @@ def main(cfg):
                 filename = wav_filename[:-4]
 
                 # check wav_file and its transcription exist
-                print(f"{wav_directory_path}/{wav_filename}")
+                # print(f"{wav_directory_path}/{wav_filename}")
                 if os.path.isfile(f"{wav_directory_path}/{wav_filename}"):
                     try:
                         transcription = transcriptions_dictionary[filename]
                         new_wav_path = f"{target_directory_path}/{wav_filename}"
                         new_txt_path = f"{target_directory_path}/{filename}.txt"
+                        print(path, new_wav_path)
                         shutil.copyfile(path, new_wav_path)
                         write_txt(transcription, new_txt_path)
                         write_txt(f"{new_wav_path}|{transcription}", manifest_file_path)

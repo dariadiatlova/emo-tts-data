@@ -28,6 +28,7 @@ def main(cfg):
                 filename = wav_filename[:-4]
 
                 # check wav_file and its transcription exist
+                print(f"{wav_directory_path}/{wav_filename}")
                 if os.path.isfile(f"{wav_directory_path}/{wav_filename}"):
                     try:
                         transcription = transcriptions_dictionary[filename]

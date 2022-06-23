@@ -21,7 +21,7 @@ def main(cfg):
     # copy all samples that are not in oovs to the new directory
     for wav in tqdm(original_wavs):
         _, wav_filename = os.path.split(wav)
-        filename = wav_filename[:-5]
+        filename = wav_filename[:-4]
         if filename not in oovs_filenames:
             source_wav_path = f"{cfg.source_directory_path}/{filename}.wav"
             source_txt_path = f"{cfg.source_directory_path}/{filename}.txt"

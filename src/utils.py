@@ -6,6 +6,18 @@ import soundfile as sf
 from typing import Tuple
 
 
+def check_for_numbers(text: str) -> bool:
+    transcription = text.split(" ")
+    # return true if it's impossible to convert any character into string
+    for char in transcription:
+        try:
+            int(char)
+            return False
+        except ValueError:
+            pass
+    return True
+
+
 def audio_write(original_audio_path: str, target_audio_path: str, target_sr: int) -> None:
     signal, sample_rate = audio_check(original_audio_path, target_sr)
     sf.write(target_audio_path, signal, sample_rate)

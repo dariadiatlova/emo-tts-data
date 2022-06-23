@@ -5,7 +5,7 @@ import hydra
 import pandas as pd
 from tqdm import tqdm
 
-from utils import write_txt
+from utils import write_txt, check_for_numbers
 
 
 @hydra.main(config_path="configs", config_name="ljspeech_dataset")
@@ -26,15 +26,17 @@ def main(cfg):
             for path in tqdm(lines):
                 _, wav_filename = os.path.split(path)
                 filename = wav_filename[:-5]
-                try:
-                    transcription = transcriptions_dictionary[filename]
-                    new_wav_path = f"{target_directory_path}/{filename}.wav"
-                    new_txt_path = f"{target_directory_path}/{filename}.txt"
-                    shutil.copyfile(f"{wav_directory_path}/{filename}.wav", new_wav_path)
-                    write_txt(transcription, new_txt_path)
-                    write_txt(f"{new_wav_path}|{transcription}", manifest_file_path)
-                except KeyError:
-                    print(f"Couldn't find a transcription for {filename} :(")
+                if not cfg.use_unalignable or filename not in cfg.unalignable_filenames:
+                    try:
+                        transcription = transcriptions_dictionary[filename]
+                        new_wav_path = f"{target_directory_path}/{filename}.wav"
+                        new_txt_path = f"{target_directory_path}/{filename}.txt"
+                        if not cfg.use_non_numbers or check_for_numbers(transcription):
+                            shutil.copyfile(f"{wav_directory_path}/{filename}.wav", new_wav_path)
+                            write_txt(transcription, new_txt_path)
+                            write_txt(f"{new_wav_path}|{transcription}", manifest_file_path)
+                    except KeyError:
+                        print(f"Couldn't find a transcription for {filename} :(")
 
 
 if __name__ == "__main__":

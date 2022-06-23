@@ -1,3 +1,8 @@
-target_directory_path: "/home/dadyatlova_1/dataset/LJSpeech-1.1/mfa_data/my_corpus"
+target_directory_path: "/home/dadyatlova_1/dataset/LJSpeech-1.1/mfa_data/new_corpus"
 source_directory_path: "/home/dadyatlova_1/dataset/LJSpeech-1.1"
-split_filenames: ["train.txt", "val.txt", "test.txt"]
+use_unalignable: true
+use_non_numbers: true
+unalignable_filenames: ["LJ027-0118", "LJ005-0282", "LJ007-0204", "LJ006-0238", "LJ016-0282", "LJ005-0253",
+                        "LJ005-0030", "LJ006-0083", "LJ004-0076", "LJ005-0028", "LJ007-0143", "LJ005-0077",
+                        "LJ007-0128", "LJ004-0079", "LJ007-0214", "LJ004-0250"]
+split_filenames: ["train.txt", "val.txt", "test.txt"] # 12500 # 100 # 500

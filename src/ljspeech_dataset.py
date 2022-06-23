@@ -28,13 +28,18 @@ def main(cfg):
                 filename = wav_filename[:-5]
                 if not cfg.use_unalignable or filename not in cfg.unalignable_filenames:
                     try:
-                        transcription = transcriptions_dictionary[filename]
                         new_wav_path = f"{target_directory_path}/{filename}.wav"
                         new_txt_path = f"{target_directory_path}/{filename}.txt"
-                        if not cfg.use_non_numbers or check_for_numbers(transcription):
-                            shutil.copyfile(f"{wav_directory_path}/{filename}.wav", new_wav_path)
-                            write_txt(transcription, new_txt_path)
-                            write_txt(f"{new_wav_path}|{transcription}", manifest_file_path)
+                        transcription = transcriptions_dictionary[filename]
+                        if cfg.use_non_numbers:
+                            if cfg.mode == "replace":
+                                transcription = check_for_numbers(transcription, cfg.mode)
+                            else:
+                                if not check_for_numbers(transcription, cfg.mode):
+                                    break
+                        shutil.copyfile(f"{wav_directory_path}/{filename}.wav", new_wav_path)
+                        write_txt(transcription, new_txt_path)
+                        write_txt(f"{new_wav_path}|{transcription}", manifest_file_path)
                     except KeyError:
                         print(f"Couldn't find a transcription for {filename} :(")
 

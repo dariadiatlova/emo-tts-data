@@ -1,5 +1,6 @@
-target_directory_path: "/home/dadyatlova_1/dataset/LJSpeech-1.1/mfa_data/new_corpus"
+target_directory_path: "/home/dadyatlova_1/dataset/LJSpeech-1.1/mfa_data/converted_numbers_corpus"
 source_directory_path: "/home/dadyatlova_1/dataset/LJSpeech-1.1"
+mode: "replace"
 use_unalignable: true
 use_non_numbers: true
 unalignable_filenames: ["LJ027-0118", "LJ005-0282", "LJ007-0204", "LJ006-0238", "LJ016-0282", "LJ005-0253",

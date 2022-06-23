@@ -3,19 +3,30 @@ import librosa
 import numpy as np
 import soundfile as sf
 
-from typing import Tuple
+from num2words import num2words
+from typing import Tuple, Optional
 
 
-def check_for_numbers(text: str) -> bool:
+def check_for_numbers(text: str, mode: str = "replace") -> Optional[bool, str]:
     transcription = text.split(" ")
-    # return true if it's impossible to convert any character into string
-    for char in transcription:
-        try:
-            int(char)
-            return False
-        except ValueError:
-            pass
-    return True
+
+    for i, char in enumerate(transcription):
+        # return transcription if no integers found or open integers into words
+        if mode == "replace":
+            try:
+                _int = int(char)
+                transcription[i] = num2words(_int, lang='en')
+            except ValueError:
+                pass
+
+        # return true if it's impossible to convert any character into string
+        else:
+            try:
+                int(char)
+                return False
+            except ValueError:
+                pass
+    return " ".join(transcription) if mode == "replace" else True
 
 
 def audio_write(original_audio_path: str, target_audio_path: str, target_sr: int) -> None:

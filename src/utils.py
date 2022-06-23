@@ -4,11 +4,13 @@ import librosa
 import numpy as np
 import soundfile as sf
 import torchaudio
+
 from num2words import num2words
+from nltk import word_tokenize
 
 
 def check_for_numbers(text: str, mode: str = "replace") -> Union[bool, str]:
-    transcription = text.split(" ")
+    transcription = word_tokenize(text)
 
     for i, char in enumerate(transcription):
         # return transcription if no integers found or open integers into words

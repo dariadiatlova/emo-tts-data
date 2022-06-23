@@ -1,0 +1,3 @@
+source_directory_path: "/home/dadyatlova_1/dataset/LJSpeech-1.1/mfa_data/converted_numbers_corpus"
+target_directory_path: "/home/dadyatlova_1/dataset/LJSpeech-1.1/mfa_data/no_oovs_corpus"
+oovs_file_path: "/home/dadyatlova_1/Documents/MFA/converted_numbers_corpus_validate_training/utterance_oovs.txt"

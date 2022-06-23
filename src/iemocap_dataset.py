@@ -1,15 +1,8 @@
 import glob
-import shutil
-import os
 from collections import defaultdict
+from typing import Dict, Tuple, List
 
 import hydra
-import torchaudio
-
-from typing import Dict, Tuple, List
-from tqdm import tqdm
-
-from utils import write_txt, audio_write
 
 
 def get_audio_data(txt_path: str, target_emotions: List[str],

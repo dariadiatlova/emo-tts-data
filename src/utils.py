@@ -1,12 +1,14 @@
-from typing import Tuple, Union
-
 import librosa
 import numpy as np
 import soundfile as sf
 import torchaudio
+import nltk
 
-from num2words import num2words
+nltk.download('punkt')
+
+from typing import Tuple, Union
 from nltk import word_tokenize
+from num2words import num2words
 
 
 def check_for_numbers(text: str, mode: str = "replace") -> Union[bool, str]:

@@ -8,6 +8,7 @@ nltk.download('punkt')
 
 from typing import Tuple, Union
 from nltk import word_tokenize
+from nltk.tokenize.treebank import TreebankWordDetokenizer
 from num2words import num2words
 
 
@@ -30,7 +31,7 @@ def check_for_numbers(text: str, mode: str = "replace") -> Union[bool, str]:
                 return False
             except ValueError:
                 pass
-    return " ".join(transcription) if mode == "replace" else True
+    return TreebankWordDetokenizer().detokenize(transcription) if mode == "replace" else True
 
 
 def audio_write(original_audio_path: str, target_audio_path: str, target_sr: int) -> None:

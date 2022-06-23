@@ -1,13 +1,13 @@
-import torchaudio
+from typing import Tuple, Union
+
 import librosa
 import numpy as np
 import soundfile as sf
-
+import torchaudio
 from num2words import num2words
-from typing import Tuple, Optional
 
 
-def check_for_numbers(text: str, mode: str = "replace") -> Optional[bool, str]:
+def check_for_numbers(text: str, mode: str = "replace") -> Union[bool, str]:
     transcription = text.split(" ")
 
     for i, char in enumerate(transcription):

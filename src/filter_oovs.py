@@ -29,8 +29,11 @@ def main(cfg):
             target_wav_path = f"{cfg.target_directory_path}/{filename}.wav"
             target_txt_path = f"{cfg.target_directory_path}/{filename}.txt"
 
-            shutil.copyfile(source_wav_path, target_wav_path)
-            shutil.copyfile(source_txt_path, target_txt_path)
+            try:
+                shutil.copyfile(source_wav_path, target_wav_path)
+                shutil.copyfile(source_txt_path, target_txt_path)
+            except FileNotFoundError:
+                print(f"Couldn't find {source_wav_path} or {source_txt_path}")
 
 
 if __name__ == "__main__":

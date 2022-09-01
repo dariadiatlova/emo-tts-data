@@ -2,94 +2,73 @@ import glob
 import shutil
 import os
 import hydra
-import torchaudio
 
-from typing import Dict
+from typing import Dict, List
 from tqdm import tqdm
 
-from utils import write_txt, audio_write
 
-
-def get_speaker_transcripts(txt_path: str, encoding_type: str) -> Dict:
+def copy_wavs(cfg: Dict, speaker: int, emotion: str, emotion_id: int, part: str):
     """
-    :param txt_path: path to the file that locates in each of the speakers' folders and contains
-    audio id, transcription and emotion
-    :param encoding_type: txt encoding type: [utf-16le, us-ascii, iso-8859-1]
-    :return: Dict, looks like: {"0011_000001.wav": "The nine the eggs, I keep.",
-                                "0011_000002.wav": "I did go, and made many prisoners."}
+    Function maps original filename into {speaker_id}_{file_id}_{emo_id} and copies into 1 directory along with
+    similar-named txt file with audio transcription.
+    :param cfg: config hydra dict
+    :param speaker: str, original name of a directory containing sub-directories with this speaker audios
+    :param emotion: str, name of emotion
+    :param emotion_id: int, mapping of string emotion into id
+    :param part: str, train, evaluation or test
+    :return: List of strings with new filenames (without extensions)
     """
-    result_dict = {}
-    with open(txt_path, "r", encoding=encoding_type) as f:
-        lines = f.readlines()
-        for line in lines:
-            string = line.split("\t")
-            # hard coding fix, somehow first sample from txt is read like '\ufeff0012_000001'
-            if string[0] == "\ufeff0012_000001":
-                result_dict["0012_000001.wav"] = string[1]
-
-            elif string[0] == "\ufeff0013_000001":
-                result_dict["0013_000001.wav"] = string[1]
-
-            elif string[0] == "\ufeff0014_000001":
-                result_dict["0014_000001.wav"] = string[1]
-
-            elif string[0] == "\ufeff0018_000001":
-                result_dict["0018_000001.wav"] = string[1]
-
-            elif string[0] == "\ufeff0019_000001":
-                result_dict["0019_000001.wav"] = string[1]
-
-            # handle handwritten indent
-            elif len(string) > 1:
-                result_dict[f"{string[0]}.wav"] = string[1]
-    return result_dict
+    val_ids_list = []
+    filenames = os.listdir(f"{cfg.source_data_directory}/{speaker}/{emotion}/{part}")
+    for filename in filenames:
+        path = f"{cfg.source_data_directory}/{speaker}/{emotion}/{part}/{filename}"
+        speaker_id, file_id = filename[:-4].split("_")
+        speaker_id = int(speaker_id)
+        file_id = int(file_id)
+        new_path = f"{cfg.target_directory_path}/wavs/{speaker_id}_{file_id}_{emotion_id}.wav"
+        if os.path.exists(path):
+            shutil.copyfile(path, new_path)
+        if part == "test":
+            val_ids_list.append(f"{speaker_id}_{file_id}_{emotion_id}")
+    return val_ids_list
 
 
 @hydra.main(config_path="configs", config_name="parallel_dataset")
 def build_dataset(cfg):
-    manifest_path = cfg.target_directory_path + "/parallel_manifest"
-    wavs_path = cfg.target_directory_path + "/wavs"
-    emotion_dict = dict(zip(cfg.emotions, cfg.emotion_ids))
-    encoding_dict = dict(zip(cfg.original_speaker_ids, cfg.speaker_encodings))
-    target_speaker_id_dict = dict(zip(cfg.original_speaker_ids, cfg.target_speaker_ids))
-    for speaker_id in tqdm(cfg.original_speaker_ids):
-        target_speaker_id = target_speaker_id_dict[speaker_id]
-        speaker_encoding_type = encoding_dict[speaker_id]
-        speaker_transcripts_dict = get_speaker_transcripts(
-            f"{cfg.source_data_directory}/{speaker_id}/{speaker_id}.txt", encoding_type=speaker_encoding_type
-        )
-        # each speaker has 5 folders for emotions: "Neutral", "Angry", "Happy", "Sad", "Surprise"
-        for emotion in cfg.emotions:
-            # each folder of emotion has a division on tran/evaluation/test in proportion 85% / 9% / 6%
-            for part in ["train", "evaluation", "test"]:
-                directory = f"{cfg.source_data_directory}/{speaker_id}/{emotion}/{part}"
-                # write to wavs all filenames in train, evaluation or test directory
-                wavs = glob.glob(f"{directory}/*.wav")
-                # create 3 Manifests files for train, evaluation and test
-                manifest_filename = f"{manifest_path}_{part}.txt"
-                for audio_id, wav in enumerate(wavs):
-                    _, wav_filename = os.path.split(wav)
-                    # skip audio for which transcription is absent
-                    if wav_filename != "0014_001590.wav":
-                        emotion_id = emotion_dict[emotion]
-                        new_absolute_wav_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
-                        new_relative_wav_path = f"vk_etts_data/wavs/{target_speaker_id}_{audio_id}_{emotion_id}.wav"
-                        # resample and write wav or copy to the folder if sr is correct
-                        signal, sr = torchaudio.load(wav)
-                        if sr != cfg.target_sample_rate:
-                            audio_write(new_absolute_wav_path, cfg.target_sample_rate)
-                        else:
-                            shutil.copyfile(wav, new_absolute_wav_path)
-                        new_txt_path = f"{wavs_path}/{target_speaker_id}_{audio_id}_{emotion_id}.txt"
-                        transcription = speaker_transcripts_dict[wav_filename]
-                        # write transcription, file name of txt == file name of wav for future TextGrids generation
-                        write_txt(transcription, new_txt_path)
-                        # write data to Manifest: "/path/to/audio.wav"|"speaker_id"|"emotion_id"|"text"
-                        write_txt(
-                            f"{new_relative_wav_path}|{target_speaker_id}|{emotion_id}|{transcription}",
-                            manifest_filename
-                        )
-    print(f"Saved wavs and manifests in {cfg.target_directory_path} folder!")
+    os.makedirs(cfg.target_directory_path, exist_ok=True)
+    os.makedirs(f"{cfg.target_directory_path}/wavs", exist_ok=True)
+
+    speakers = os.listdir(cfg.source_data_directory)[9:20]
+    speaker_encodings = cfg.speaker_encodings
+    emotions_dict = dict(zip(cfg.emotions, cfg.emotion_ids))
+
+    all_val_ids = []
+
+    for i, speaker in tqdm(enumerate(speakers)):
+        if os.path.isdir(f"{cfg.source_data_directory}/{speaker}"):
+            speaker_transcripts = open(f"{cfg.source_data_directory}/{speaker}/{speaker}.txt",
+                                       encoding=speaker_encodings[i]).readlines()
+
+            for speaker_txt in speaker_transcripts:
+                filename, text, emotion = speaker_txt.split("\t")
+                speaker_id, file_id = filename.split("_")
+                emotion_id = emotions_dict[emotion[:-1]]
+                speaker_id = int(speaker_id)
+                file_id = int(file_id)
+                with open(f"{cfg.target_directory_path}/wavs/{speaker_id}_{file_id}_{emotion_id}.txt", "w") as f:
+                    f.write(text)
+
+            for emotion in cfg.emotions:
+                emotion_id = emotions_dict[emotion]
+                for part in ["train", "evaluation", "test"]:
+                    res = copy_wavs(cfg, speaker, emotion, emotion_id, part)
+                    if len(res) > 0:
+                        all_val_ids.extend(res)
+
+    with open(f"{cfg.target_directory_path}/val_ids.txt", "w") as f:
+        f.write("|".join(all_val_ids))
+
+    print(f"Saved wavs and txts in {cfg.target_directory_path} folder!")
 
 
 if __name__ == "__main__":

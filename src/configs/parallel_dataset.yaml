@@ -3,4 +3,3 @@ source_data_directory: "/root/storage/dasha/data/emo-data/ESD"
 speaker_encodings: ["us-ascii", "utf-16le", "utf-16le", "utf-16le", "us-ascii", "iso-8859-1", "iso-8859-1", "utf-16le", "utf-16le", "us-ascii"]
 emotions: ["Neutral", "Angry", "Happy", "Sad", "Surprise"]
 emotion_ids: [0, 1, 2, 3, 4]
-target_sample_rate: 16000

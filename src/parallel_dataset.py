@@ -7,30 +7,25 @@ from typing import Dict, List
 from tqdm import tqdm
 
 
-def copy_wavs(cfg: Dict, speaker: int, emotion: str, emotion_id: int, part: str):
-    """
-    Function maps original filename into {speaker_id}_{file_id}_{emo_id} and copies into 1 directory along with
-    similar-named txt file with audio transcription.
-    :param cfg: config hydra dict
-    :param speaker: str, original name of a directory containing sub-directories with this speaker audios
-    :param emotion: str, name of emotion
-    :param emotion_id: int, mapping of string emotion into id
-    :param part: str, train, evaluation or test
-    :return: List of strings with new filenames (without extensions)
-    """
+def copy_wavs(cfg, speaker, emotion, part, speaker_emotions_dict, speaker_txt_dict):
     val_ids_list = []
     filenames = os.listdir(f"{cfg.source_data_directory}/{speaker}/{emotion}/{part}")
-    for filename in filenames:
+    for i, filename in enumerate(filenames):
         path = f"{cfg.source_data_directory}/{speaker}/{emotion}/{part}/{filename}"
         speaker_id, file_id = filename[:-4].split("_")
-        speaker_id = int(speaker_id)
-        file_id = int(file_id)
-        new_path = f"{cfg.target_directory_path}/wavs/{speaker_id}_{file_id}_{emotion_id}.wav"
-        txt_path = f"{cfg.target_directory_path}/wavs/{speaker_id}_{file_id}_{emotion_id}.txt"
-        if os.path.exists(path) and os.path.exists(txt_path):
-            shutil.copyfile(path, new_path)
-            if part == "test":
-                val_ids_list.append(f"{speaker_id}_{file_id}_{emotion_id}")
+        try:
+            emotion_id = speaker_emotions_dict[filename[:-4]]
+            speaker_id = int(speaker_id)
+            new_path = f"{cfg.target_directory_path}/wavs/{speaker_id}_{i}_{emotion_id}.wav"
+            txt_path = f"{cfg.target_directory_path}/wavs/{speaker_id}_{i}_{emotion_id}.txt"
+            if os.path.exists(path):
+                shutil.copyfile(path, new_path)
+                with open(txt_path, "w") as f:
+                    f.write(speaker_txt_dict[filename[:-4]])
+                if part == "evaluation":
+                    val_ids_list.append(f"{speaker_id}_{i}_{emotion_id}")
+        except KeyError:
+            pass
     return val_ids_list
 
 
@@ -50,25 +45,25 @@ def build_dataset(cfg):
             speaker_transcripts = open(f"{cfg.source_data_directory}/{speaker}/{speaker}.txt",
                                        encoding=speaker_encodings[i]).readlines()
 
-            for speaker_txt in speaker_transcripts:
+            speaker_filename_ids = []
+            speaker_texts = []
+            speaker_emotions = []
+            for i, speaker_txt in enumerate(speaker_transcripts):
                 try:
                     filename, text, emotion = speaker_txt.split("\t")
-                    speaker_id, file_id = filename.split("_")
-                    emotion = emotion[:-1]
-                    if emotion[-1] == " ":
-                        emotion = emotion[:-1]
-                    emotion_id = emotions_dict[emotion]
-                    speaker_id = int(speaker_id)
-                    file_id = int(file_id)
-                    with open(f"{cfg.target_directory_path}/wavs/{speaker_id}_{file_id}_{emotion_id}.txt", "w") as f:
-                        f.write(text)
-                except ValueError:
+                    if len(emotion) > 1:
+                        speaker_emotions.append(emotions_dict[emotion[:-1]])
+                        speaker_filename_ids.append(filename)
+                        speaker_texts.append(text)
+                except (KeyError, ValueError) as e:
                     pass
 
+            speaker_emotions_dict = dict(zip(speaker_filename_ids, speaker_emotions))
+            speaker_txt_dict = dict(zip(speaker_filename_ids, speaker_texts))
+
             for emotion in cfg.emotions:
-                emotion_id = emotions_dict[emotion]
                 for part in ["train", "evaluation", "test"]:
-                    res = copy_wavs(cfg, speaker, emotion, emotion_id, part)
+                    res = copy_wavs(cfg, speaker, emotion, part, speaker_emotions_dict, speaker_txt_dict)
                     if len(res) > 0:
                         all_val_ids.extend(res)
 

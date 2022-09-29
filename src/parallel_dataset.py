@@ -9,6 +9,7 @@ from tqdm import tqdm
 
 def copy_wavs(cfg, speaker, emotion, part, speaker_emotions_dict, speaker_txt_dict):
     val_ids_list = []
+    test_ids_list = []
     filenames = os.listdir(f"{cfg.source_data_directory}/{speaker}/{emotion}/{part}")
     for i, filename in enumerate(filenames):
         path = f"{cfg.source_data_directory}/{speaker}/{emotion}/{part}/{filename}"
@@ -24,9 +25,11 @@ def copy_wavs(cfg, speaker, emotion, part, speaker_emotions_dict, speaker_txt_di
                     f.write(speaker_txt_dict[filename[:-4]])
                 if part == "evaluation":
                     val_ids_list.append(f"{speaker_id}_{i}_{emotion_id}")
+                elif part == "test":
+                    test_ids_list.append(f"{speaker_id}_{i}_{emotion_id}")
         except KeyError:
             pass
-    return val_ids_list
+    return val_ids_list, test_ids_list
 
 
 @hydra.main(config_path="configs", config_name="parallel_dataset")
@@ -39,6 +42,7 @@ def build_dataset(cfg):
     emotions_dict = dict(zip(cfg.emotions, cfg.emotion_ids))
 
     all_val_ids = []
+    all_test_ids = []
 
     for i, speaker in tqdm(enumerate(speakers)):
         if os.path.isdir(f"{cfg.source_data_directory}/{speaker}"):
@@ -63,12 +67,17 @@ def build_dataset(cfg):
 
             for emotion in cfg.emotions:
                 for part in ["train", "evaluation", "test"]:
-                    res = copy_wavs(cfg, speaker, emotion, part, speaker_emotions_dict, speaker_txt_dict)
-                    if len(res) > 0:
-                        all_val_ids.extend(res)
+                    val_ids, test_ids = copy_wavs(cfg, speaker, emotion, part, speaker_emotions_dict, speaker_txt_dict)
+                    if len(val_ids) > 0:
+                        all_val_ids.extend(val_ids)
+                    if len(test_ids) > 0:
+                        all_test_ids.extend(test_ids)
 
     with open(f"{cfg.target_directory_path}/val_ids.txt", "w") as f:
         f.write("|".join(all_val_ids))
+
+    with open(f"{cfg.target_directory_path}/test_ids.txt", "w") as f:
+        f.write("|".join(all_test_ids))
 
     print(f"Saved wavs and txts in {cfg.target_directory_path} folder!")
 
